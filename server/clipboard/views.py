@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import Http404
-from django.views.decorators.csrf import csrf_exempt
 from clipboard.models import Clip
 from clipboard.serializers import ClipSerializer
 from rest_framework import status
@@ -24,7 +23,7 @@ class CopyPaste(APIView):
     """
     def get_clip(self, user_id):
         try:
-            clip = Clip.objects.get(user_id=int(user_id))
+            return Clip.objects.get(user_id=int(user_id))
         except Clip.DoesNotExist:
             raise Http404
     
@@ -37,6 +36,7 @@ class CopyPaste(APIView):
 
     def put(self, request, user_id):
         clip = self.get_clip(user_id)
+        print(clip, user_id)
         serializer = ClipSerializer(clip, data=request.data)
         if serializer.is_valid():
             serializer.save()
