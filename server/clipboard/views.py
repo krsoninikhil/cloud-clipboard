@@ -5,7 +5,7 @@ from clipboard.serializers import ClipSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView 
-
+from rest_framework import permissions
 
 class ListClip(APIView):
     """
@@ -16,35 +16,38 @@ class ListClip(APIView):
         serializer = ClipSerializer(clips, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = ClipSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)  # explicitly specifying user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
             
 class CopyPaste(APIView):
     """
     Insert the data comming from devices to the database.
     """
-    def get_clip(self, user_id):
+    def get_clip(self, user):
         try:
-            return Clip.objects.get(user_id=int(user_id))
+            return Clip.objects.get(user=user)
         except Clip.DoesNotExist:
             raise Http404
     
-    def post(self, request, user_id):
-        serializer = ClipSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, user_id):
-        clip = self.get_clip(user_id)
-        print(clip, user_id)
+    def put(self, request):
+        clip = self.get_clip(request.user)
         serializer = ClipSerializer(clip, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, user_id):
-        clip = self.get_clip(user_id)
+    def get(self, request):
+        clip = self.get_clip(request.user)
         serializer = ClipSerializer(clip)
         return Response(serializer.data)
 
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    

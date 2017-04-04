@@ -21,6 +21,7 @@ from clipboard import views as cb
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', cb.ListClip.as_view()),
-    url(r'^copy-paste/(?P<user_id>[0-9]+)/$', cb.CopyPaste.as_view()),
+    url(r'^copy-paste/', cb.CopyPaste.as_view()),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
 ]
