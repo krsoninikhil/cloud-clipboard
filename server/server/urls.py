@@ -17,9 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from clipboard import views as cb
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', cb.list_clips),
-    url(r'^copy/', cb.copy),
-    url(r'^paste/', cb.paste),
+    url(r'^$', cb.ListClip.as_view()),
+    url(r'^copy-paste/(?P<user_id>[0-9]+)/$', cb.CopyPaste.as_view()),
+
 ]
