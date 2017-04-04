@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 from clipboard.models import Clip
 from clipboard.serializers import ClipSerializer
+from clipboard.permissions import IsOwnerOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView 
@@ -23,7 +24,7 @@ class ListClip(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
             
 class CopyPaste(APIView):
@@ -49,5 +50,5 @@ class CopyPaste(APIView):
         serializer = ClipSerializer(clip)
         return Response(serializer.data)
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     
