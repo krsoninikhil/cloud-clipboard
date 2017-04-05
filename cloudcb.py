@@ -7,7 +7,7 @@ import os
 import sys
 import subprocess
 
-server_url = "https://cloudclipboard-1.herokuapp.com/" # "http://localhost:8000/"
+server_url = "https://cloudcb.herokuapp.com/" # "http://localhost:8000/"
 
 def copy():
     """
