@@ -37,7 +37,7 @@ class CopyPaste(APIView):
         except Clip.DoesNotExist:
             raise Http404
     
-    def put(self, request):
+    def post(self, request):
         clip = self.get_clip(request.user)
         serializer = ClipSerializer(clip, data=request.data)
         if serializer.is_valid():

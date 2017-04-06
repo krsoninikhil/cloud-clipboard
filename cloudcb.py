@@ -2,12 +2,14 @@
 
 # This script acts as desktop client
 
-import requests
 import os
 import sys
+import json
 import subprocess
+import requests
 
-server_url = "https://cloudcb.herokuapp.com/" # "http://localhost:8000/"
+server_url = "https://cloudcb.herokuapp.com/"
+#server_url =  "http://localhost:8000/"
 
 def copy():
     """
@@ -28,7 +30,7 @@ def upload(username, password):
     Sends the copied text to server.
     """
     payload = {"text": copy(), "device": ""}
-    res = requests.put(
+    res = requests.post(
         server_url+"copy-paste/",
         data = payload,
         auth = (username, password)
@@ -54,7 +56,7 @@ def download(username, password):
     """
     res = requests.get(server_url+"copy-paste/", auth=(username, password))
     if res.status_code == 200:
-        paste(res.text)
+        paste(json.loads(res.text)["text"])
     else:
         print("Cannot download the data.")
 
