@@ -14,7 +14,7 @@ def copy():
     Returns the current text on clipboard.
     """
     if os.name == "posix":
-        p = subprocess.Popen(["xsel", "-o"], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["xsel", "-bo"], stdout=subprocess.PIPE)
         data = p.communicate()[0].decode("utf-8")
     elif os.name == "nt":
         data = None
@@ -23,7 +23,7 @@ def copy():
         exit()
     return data
 
-def upload():
+def upload(username, password):
     """
     Sends the copied text to server.
     """
@@ -31,7 +31,7 @@ def upload():
     res = requests.put(
         server_url+"copy-paste/",
         data = payload,
-        auth = ('nik', 'nik#RA.1')
+        auth = (username, password)
     )
     if res.status_code == 200:
         print("Succeses! Copied to Cloud-Clipboard.")
@@ -48,11 +48,11 @@ def paste(data):
     if p[1] is not None:
         print("Error in accessing local clipboard")
 
-def download():
+def download(username, password):
     """
     Downloads from server and updates the local clipboard.
     """
-    res = requests.get(server_url+"copy-paste/", auth=('nik', 'nik#RA.1'))
+    res = requests.get(server_url+"copy-paste/", auth=(username, password))
     if res.status_code == 200:
         paste(res.text)
     else:
@@ -60,16 +60,18 @@ def download():
 
 def usage():
     print("Error: Unknown argument")
-    print("Usage: ccb.py copy|paste")
+    print("Usage: ccb.py copy|paste <username> <password>")
     
 
 if __name__ == "__main__":
     #print("Cloud Clipboard -- Share you clipboard accross the devices.")
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 4:
+        username = sys.argv[2]
+        password = sys.argv[3]
         if sys.argv[1] == "copy":
-            upload()
+            upload(username, password)
         elif sys.argv[1] == "paste":
-            download()
+            download(username, password)
         else:
             usage()
     else:
