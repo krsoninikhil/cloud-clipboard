@@ -14,6 +14,7 @@ from kivy.storage.jsonstore import JsonStore
 from constants import SERVER_URI
 
 import base64
+import urllib
 
 class LoginScreen(Screen):
 
@@ -85,12 +86,12 @@ class CloudCBScreen(Screen):
         
     def paste(self, req, res):
         # todo: this losses currently copied text, so store it somewhere
-        print("pastecalled")
         Clipboard.copy(res['text'])
         self.update_cloud_clip()
 
     def upload(self, *args):
-        payload = {'text': self.copy()}
+        payload = urllib.parse.urlencode({'text': self.copy()})
+        self.header['Content-type'] = 'application/x-www-form-urlencoded'
         copy_res = UrlRequest(
             self.url,
             req_headers = self.header,
