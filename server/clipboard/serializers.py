@@ -16,8 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
         many = True,
         queryset = Clip.objects.all()
     )
+
+    def create(self, valid_data):
+        user = User(username=valid_data['username'])
+        user.set_password(valid_data['password'])
+        user.save()
+        return user
     
     class Meta:
         model = User
-        fields = ('id', 'username', 'clip')
+        fields = ('id', 'username', 'password', 'clip')
         

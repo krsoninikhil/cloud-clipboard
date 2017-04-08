@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import Http404
 from clipboard.models import Clip
-from clipboard.serializers import ClipSerializer
+from clipboard.serializers import ClipSerializer, UserSerializer
 from clipboard.permissions import IsOwnerOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView 
 from rest_framework import permissions
+from rest_framework.throttling import AnonRateThrottle
 
 class ListClip(APIView):
     """
@@ -51,4 +52,19 @@ class CopyPaste(APIView):
         return Response(serializer.data)
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+
+class UserRegister(APIView):
+    """
+    To register new users.
+    """
+
+    throttle_classes = (AnonRateThrottle,)
+    throttle_rates = {'anon': '1/minute'}
     
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data['username'], status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

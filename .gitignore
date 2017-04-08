@@ -1,5 +1,6 @@
 *db.sqlite3
 *data.json
+.buildozer
 # For emacs temporary files
 *~
 \#*\#
