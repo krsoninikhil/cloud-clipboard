@@ -8,8 +8,8 @@ import json
 import subprocess
 import requests
 
-server_url = "https://cloudcb.herokuapp.com/"
-#server_url =  "http://localhost:8000/"
+#server_url = "https://cloudcb.herokuapp.com/"
+server_url =  "http://localhost:8000/"
 
 def copy():
     """
@@ -38,7 +38,7 @@ def upload(username, password):
     if res.status_code == 200:
         print("Succeses! Copied to Cloud-Clipboard.")
     else:
-        print("Error:", res.text)
+        print("Error: ", res.text)
 
 def paste(data):
     """
@@ -60,9 +60,20 @@ def download(username, password):
     else:
         print("Cannot download the data.")
 
+def register(username, password):
+    """
+    To let user register.
+    """
+    payload = {"username": username, "password": password}
+    res = requests.post(server_url+"register/", data=payload)
+    if res.status_code == 201:
+        print("Hi %s! You are all set." % username)
+    else:
+        print("Error: ", res.text)
+
 def usage():
     print("Error: Unknown argument")
-    print("Usage: ccb.py copy|paste <username> <password>")
+    print("Usage: ccb.py copy|paste|register <email> <password>")
     
 
 if __name__ == "__main__":
@@ -74,6 +85,8 @@ if __name__ == "__main__":
             upload(username, password)
         elif sys.argv[1] == "paste":
             download(username, password)
+        elif sys.argv[1] == "register":
+            register(username, password)
         else:
             usage()
     else:

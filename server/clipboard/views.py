@@ -60,7 +60,6 @@ class UserRegister(APIView):
     """
 
     throttle_classes = (AnonRateThrottle,)
-    throttle_rates = {'anon': '1/minute'}
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)
