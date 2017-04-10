@@ -2,15 +2,43 @@
 
 > I need a url on my mobile. Don't want to type it. Don't want to message myself.
 
-Cloud Clipboard shares the data on clipboard across your devices. So it allows to copy on one device and in another.
+Cloud Clipboard shares the data on clipboard across your devices. So it allows to copy on one device and paste on another.
 
-# How?
+Currently supported platforms: Linux, Android
 
-1. You copy the text.
-2. Cloud Clipboard sends the copied text from your clipboard to server.
-3. Sends the data to you mobile by notification.
-4. You check the notification. This copies the text to you mobile's clipboard.
-5. Now, you can paste the text.
+# Setup
+
+- Download or clone this repo and change your directory to it. You only need `cloud.py` on desktop.
+- Install requirements by running
+
+```bash
+pip3 install -r server/requirements.txt
+```
+
+- Register yourself by running
+
+```bash
+python3 cloudcb.py register <username> <password>
+```
+
+- Install this [apk](https://github.com/krsoninikhil/cloud-clipboard/raw/master/mobile/bin/CloudClipboard-0.1-debug.apk) on your mobile.
+- You're done.
+
+# Instructions to use
+
+- Copy the text.
+- Execute this command to copy to cloud-clipboard if you are on desktop
+
+```bash
+python3 cloud.py copy
+```
+
+- Open the app on your mobile to get that text on mobile's clipboard (This will not be required from next update).
+- Execute this command to update your desktop's clipboard to the text copied on other devices
+
+```bash
+python3 cloud.py paste
+```
 
 # License
 
