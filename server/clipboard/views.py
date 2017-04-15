@@ -30,7 +30,7 @@ class ListClip(APIView):
             
 class CopyPaste(APIView):
     """
-    Insert the data comming from devices to the database.
+    Update and retrieve the data.
     """
     def get_clip(self, user):
         try:

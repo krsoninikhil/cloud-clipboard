@@ -11,7 +11,8 @@ from kivy.network.urlrequest import UrlRequest
 from kivy.core.clipboard import Clipboard
 from kivy.storage.jsonstore import JsonStore
 
-from constants import SERVER_URI
+import utils
+from utils import SERVER_URI
 
 import base64
 import urllib
@@ -19,7 +20,7 @@ import urllib
 class LoginScreen(Screen):
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(LoginScreen, self).__init__(**kwargs)
         self.username_w = TextInput(multiline=False)
         self.password_w = TextInput(password=True, multiline=False)
         self.login_btn = Button(text='Login')
@@ -35,32 +36,36 @@ class LoginScreen(Screen):
 
         self.add_widget(layout)
 
-    def store_data(self, data):
+    def store_data(self, token):
         """
-        Stores the 'data' in json format.
+        Stores the 'token' in json format.
         """
         store = JsonStore('data.json')
-        token = "%s:%s" % (data['username'], data['password'])
-        token = base64.b64encode(token.encode('utf-8')).decode('utf-8')
         store.put('creds', token=token)
-        self.add_widget(Label(text='Success! Credential verified and stored.'))
         self.manager.current = 'CloudCB'
     
     def login(self, button):
-        creds = {
-            'username': self.username_w.text,
-            'password': self.password_w.text
-        }
+        token = "%s:%s" % (self.username_w.text, self.password_w.text)
+        token = base64.b64encode(token.encode('utf-8')).decode('utf-8')
         login_res = UrlRequest(
             "%scheck-creds/" % SERVER_URI,
-            on_success = self.store_data(creds)
+            req_headers = {'Authorization': "Basic %s" % token},
+            on_success = self.store_data(token),
+            on_error = utils.show_error,
+            on_failure = self.show_failure
         )
+
+    def show_failure(self, req, res):
+        print('Request: ', req)
+        print('Response: ', res)
+        if req.resp_status:
+            self.manager.current = 'Login'
 
 
 class CloudCBScreen(Screen):
 
     def __init__(self, auth_token, **kwargs):
-        super().__init__(**kwargs)
+        super(CloudCBScreen, self).__init__(**kwargs)
         self.header = {'Authorization': "Basic %s" % auth_token}
         self.url = SERVER_URI + 'copy-paste/'       
         self.cloud_clip = TextInput(text="Fetching...")
@@ -80,25 +85,26 @@ class CloudCBScreen(Screen):
             self.url,
             req_headers = self.header,
             on_success = self.paste,
-            on_error = self.show_error,
-            on_failure = self.show_error
+            on_error = utils.show_error,
+            on_failure = self.show_failure
         )        
         
     def paste(self, req, res):
         # todo: this losses currently copied text, so store it somewhere
         Clipboard.copy(res['text'])
         self.update_cloud_clip()
-
+        
     def upload(self, *args):
-        payload = urllib.parse.urlencode({'text': self.copy()})
+        # payload = urllib.parse.urlencode({'text': self.copy()})  # python3
+        payload = urllib.urlencode({'text': self.copy()})  # python2
         self.header['Content-type'] = 'application/x-www-form-urlencoded'
         copy_res = UrlRequest(
             self.url,
             req_headers = self.header,
             req_body = payload,
             on_success = self.update_cloud_clip,
-            on_error = self.show_error,
-            on_failure = self.show_error
+            on_error = utils.show_error,
+            on_failure = self.show_failure
         )
 
     def copy(self):
@@ -106,15 +112,14 @@ class CloudCBScreen(Screen):
 
     def update_cloud_clip(self, *args):
         self.cloud_clip.text = self.copy()
-        
-    def show_error(self, req, error):
-        print(
-            "Errors: %s" % error,
-            "Request: %s" % req.__dict__,
-            "This seems unusual. Please file a bug report with above details",
-            "at https://github.com/krsoninikhil/cloud-clipboard/issues"
-        )
 
+    def show_failure(self, req, res):
+        print('Request: ', req)
+        print('Response: ', res)
+        if req.resp_status:
+            self.manager.current = 'Login'
+
+        
         
 class MyApp(App):
 
@@ -126,7 +131,7 @@ class MyApp(App):
 
     def build(self):
         self.title = "Cloud Clipboard"
-        auth_token = self.get_data('basic_auth')
+        auth_token = self.get_data('creds')
         sm = ScreenManager()
         s2 = CloudCBScreen(auth_token, name='CloudCB')
         s1 = LoginScreen(name='Login')
