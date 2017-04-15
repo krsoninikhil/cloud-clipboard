@@ -8,8 +8,8 @@ import json
 import subprocess
 import requests
 
-#server_url = "https://cloudcb.herokuapp.com/"
-server_url =  "http://localhost:8000/"
+server_url = "https://cloudcb.herokuapp.com/"
+#server_url =  "http://localhost:8000/"
 
 def copy():
     """

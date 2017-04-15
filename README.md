@@ -12,13 +12,13 @@ Currently supported platforms: Linux, Android
 - Install requirements by running
 
 ```bash
-pip3 install -r server/requirements.txt
+pip install -r server/requirements.txt
 ```
 
 - Register yourself by running
 
 ```bash
-python3 cloudcb.py register <username> <password>
+python cloudcb.py register <username> <password>
 ```
 
 - Install this [apk](https://github.com/krsoninikhil/cloud-clipboard/raw/master/mobile/bin/CloudClipboard-0.1-debug.apk) on your mobile.
@@ -30,14 +30,14 @@ python3 cloudcb.py register <username> <password>
 - Execute this command to copy to cloud-clipboard if you are on desktop
 
 ```bash
-python3 cloud.py copy
+python cloud.py copy <username> <password>
 ```
 
 - Open the app on your mobile to get that text on mobile's clipboard (This will not be required from next update).
 - Execute this command to update your desktop's clipboard to the text copied on other devices
 
 ```bash
-python3 cloud.py paste
+python cloud.py paste <username> <password>
 ```
 
 # License
