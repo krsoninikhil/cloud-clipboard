@@ -30,15 +30,19 @@ python cloudcb.py register <username> <password>
 - Execute this command to copy to cloud-clipboard if you are on desktop
 
 ```bash
-python cloud.py copy <username> <password>
+python cloudcb.py copy <username> <password>
 ```
 
 - Open the app on your mobile to get that text on mobile's clipboard (This will not be required from next update).
 - Execute this command to update your desktop's clipboard to the text copied on other devices
 
 ```bash
-python cloud.py paste <username> <password>
+python cloudcb.py paste <username> <password>
 ```
+
+# TODO
+
+Run clients in background to automatically update the clipboard. Ideas on implementation?
 
 # License
 
