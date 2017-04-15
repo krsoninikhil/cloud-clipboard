@@ -33,7 +33,6 @@ class LoginScreen(Screen):
         layout.add_widget(Label(text='Password'))
         layout.add_widget(self.password_w)
         layout.add_widget(self.login_btn)
-
         self.add_widget(layout)
 
     def store_data(self, token):
@@ -42,13 +41,13 @@ class LoginScreen(Screen):
         """
         store = JsonStore('data.json')
         store.put('creds', token=token)
-        self.manager.current = 'CloudCB'
+        show_cloudcb(self.manager, token)
     
     def login(self, button):
         token = "%s:%s" % (self.username_w.text, self.password_w.text)
         token = base64.b64encode(token.encode('utf-8')).decode('utf-8')
         login_res = UrlRequest(
-            "%scheck-creds/" % SERVER_URI,
+            "%sverify-user/" % SERVER_URI,
             req_headers = {'Authorization': "Basic %s" % token},
             on_success = self.store_data(token),
             on_error = utils.show_error,
@@ -56,10 +55,8 @@ class LoginScreen(Screen):
         )
 
     def show_failure(self, req, res):
-        print('Request: ', req)
-        print('Response: ', res)
-        if req.resp_status:
-            self.manager.current = 'Login'
+        if req.resp_status / 100 == 4:
+            self.add_widget(Label(text='Invalid username/password. See readme to register.'))
 
 
 class CloudCBScreen(Screen):
@@ -114,10 +111,8 @@ class CloudCBScreen(Screen):
         self.cloud_clip.text = self.copy()
 
     def show_failure(self, req, res):
-        print('Request: ', req)
-        print('Response: ', res)
-        if req.resp_status:
-            self.manager.current = 'Login'
+        if req.resp_status / 100 == 4:
+            show_login(self.manager)
 
         
         
@@ -130,20 +125,23 @@ class MyApp(App):
         return None
 
     def build(self):
-        self.title = "Cloud Clipboard"
+        self.title = 'Cloud Clipboard'
         auth_token = self.get_data('creds')
         sm = ScreenManager()
-        s2 = CloudCBScreen(auth_token, name='CloudCB')
-        s1 = LoginScreen(name='Login')
-        sm.add_widget(s1)
-        sm.add_widget(s2)
         if auth_token:
-            sm.current = 'CloudCB'
+            show_cloudcb(sm, auth_token)
         else:
-            sm.current = 'Login'
-
+            show_login(sm)
         return sm
 
 
+def show_login(sm):
+     s = LoginScreen(name='Login')
+     sm.switch_to(s)
+
+def show_cloudcb(sm, auth_token):
+    s = CloudCBScreen(auth_token, name='CloudCB')
+    sm.switch_to(s)
+     
 if __name__ == '__main__':
     MyApp().run()
