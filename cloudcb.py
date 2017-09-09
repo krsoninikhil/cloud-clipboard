@@ -7,6 +7,7 @@ import sys
 import json
 import subprocess
 import requests
+import pyperclip
 
 server_url = "https://cloudcb.herokuapp.com/"
 #server_url =  "http://localhost:8000/"
@@ -15,14 +16,16 @@ def copy():
     """
     Returns the current text on clipboard.
     """
-    if os.name == "posix":
-        p = subprocess.Popen(["xsel", "-bo"], stdout=subprocess.PIPE)
-        data = p.communicate()[0].decode("utf-8")
-    elif os.name == "nt":
-        data = None
-    else:
-        print("We don't yet support %s Operating System." % os.name)
-        exit()
+    data = pyperclip.paste()
+    ## before using pyperclip
+    # if os.name == "posix":
+    #     p = subprocess.Popen(["xsel", "-bo"], stdout=subprocess.PIPE)
+    #     data = p.communicate()[0].decode("utf-8")
+    # elif os.name == "nt":
+    #     data = None
+    # else:
+    #     print("We don't yet support %s Operating System." % os.name)
+    #     exit()
     return data
 
 def upload(username, password):
@@ -44,11 +47,12 @@ def paste(data):
     """
     Copies 'data' to local clipboard which enables pasting.
     """
-    p = subprocess.Popen(["xsel", "-bi"], stdout=subprocess.PIPE,
-                         stdin=subprocess.PIPE)
-    p = p.communicate(data.encode("utf-8"))
-    if p[1] is not None:
-        print("Error in accessing local clipboard")
+    # p = subprocess.Popen(["xsel", "-bi"], stdout=subprocess.PIPE,
+    #                      stdin=subprocess.PIPE)
+    # p = p.communicate(data.encode("utf-8"))
+    # if p[1] is not None:
+    #     print("Error in accessing local clipboard")
+    pyperclip.copy(data)
 
 def download(username, password):
     """
