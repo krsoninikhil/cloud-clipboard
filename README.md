@@ -9,10 +9,11 @@ Currently supported platforms: Linux, Android
 # Setup
 
 - Download or clone this repo and change your directory to it. You only need `cloud.py` on desktop.
-- Install requirements by running
+- The scipt used `xsel` system package and `requests` python package. So install them by running
 
 ```bash
-pip install -r server/requirements.txt
+pip install requests
+apt-get install xsel
 ```
 
 - Register yourself by running
@@ -21,8 +22,20 @@ pip install -r server/requirements.txt
 python cloudcb.py register <username> <password>
 ```
 
+- Add a keyboard shortcut `Alt + C` to run below command
+
+```bash
+gnome-terminal --command "python3 /home/nks/Projects/cloud-clipboard/cloudcb.py copy <username> <password>"
+```
+
+- Add 
+
+```bash
+gnome-terminal --command "python3 /home/nks/Projects/cloud-clipboard/cloudcb.py paste <username> <password>"
+``` 
+- Replace `<username>` with your username and `<password>` with your password.
 - Install this [apk](https://github.com/krsoninikhil/cloud-clipboard/raw/master/mobile/bin/CloudClipboard-0.1-debug.apk) on your mobile.
-- You're done.
+- You're all setup.
 
 # Instructions to use
 

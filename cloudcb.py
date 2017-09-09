@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Usr/bin/env python3
 
 # This script acts as desktop client
 
@@ -73,7 +73,7 @@ def register(username, password):
 
 def usage():
     print("Error: Unknown argument")
-    print("Usage: ccb.py copy|paste|register <email> <password>")
+    print("Usage: cloudcb.py copy|paste|register <email> <password>")
     
 
 if __name__ == "__main__":

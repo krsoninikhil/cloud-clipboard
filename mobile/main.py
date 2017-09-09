@@ -64,15 +64,18 @@ class CloudCBScreen(Screen):
     def __init__(self, auth_token, **kwargs):
         super(CloudCBScreen, self).__init__(**kwargs)
         self.header = {'Authorization': "Basic %s" % auth_token}
-        self.url = SERVER_URI + 'copy-paste/'       
+        self.url = SERVER_URI + 'copy-paste/'
+        self.old_text = Clipboard.paste()
         self.cloud_clip = TextInput(text="Fetching...")
         
         layout = BoxLayout(orientation='vertical')
-        layout.add_widget(Label(text='Cloud Clipboard\n'))
-        layout.add_widget(Label(text='Current text on cloud clipboard:'))
+        layout.add_widget(Label(text='Cloud Clipboard'))
+        layout.add_widget(Label(text='Current text on clipboard:'))
         layout.add_widget(self.cloud_clip)
         layout.add_widget(Button(text='Refresh', on_press=self.download))
-        layout.add_widget(Button(text='Update Cloud Clipboard', on_press=self.upload))
+        layout.add_widget(Label(text='Earlier text on your clipboard:'))
+        layout.add_widget(TextInput(text=self.old_text))
+        layout.add_widget(Button(text='Update Cloud Clipboard with this text', on_press=self.upload))
         self.add_widget(layout)
 
         self.download()
@@ -86,20 +89,19 @@ class CloudCBScreen(Screen):
             on_failure = self.show_failure
         )        
         
-    def paste(self, req, res):
-        # todo: this losses currently copied text, so store it somewhere
+    def paste(self, req='', res=''):
         Clipboard.copy(res['text'])
         self.update_cloud_clip()
         
     def upload(self, *args):
-        # payload = urllib.parse.urlencode({'text': self.copy()})  # python3
-        payload = urllib.urlencode({'text': self.copy()})  # python2
+        # payload = urllib.parse.urlencode({'text': self.old_text})  # python3
+        payload = urllib.urlencode({'text': self.old_text})  # python2
         self.header['Content-type'] = 'application/x-www-form-urlencoded'
         copy_res = UrlRequest(
             self.url,
             req_headers = self.header,
             req_body = payload,
-            on_success = self.update_cloud_clip,
+            on_success = self.paste,
             on_error = utils.show_error,
             on_failure = self.show_failure
         )
@@ -136,8 +138,8 @@ class MyApp(App):
 
 
 def show_login(sm):
-     s = LoginScreen(name='Login')
-     sm.switch_to(s)
+    s = LoginScreen(name='Login')
+    sm.switch_to(s)
 
 def show_cloudcb(sm, auth_token):
     s = CloudCBScreen(auth_token, name='CloudCB')
