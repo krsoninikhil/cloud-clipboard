@@ -4,7 +4,7 @@
 
 Cloud Clipboard shares the data on clipboard across your devices. So it allows to copy on one device and paste on another.
 
-Currently supported platforms: Linux, Android
+Currently supported platforms: Linux, Windows, Android
 
 # Setup
 
@@ -22,20 +22,39 @@ apt-get install xsel
 python cloudcb.py register <username> <password>
 ```
 
-- Add a keyboard shortcut `Alt + C` to run below command
+- Replace `<username>` with your username and `<password>` with your password.
+- Install this [apk](https://github.com/krsoninikhil/cloud-clipboard/raw/master/mobile/bin/CloudClipboard-1.0-debug.apk) on your mobile.
+
+# Adding keyboard shortcuts
+
+- Run the script with keyboard shortcuts analogous to `Ctrl + C` and `Ctrl + V`
+
+### For Linux
+
+- Add a keyboard shortcut `Alt + C` to run the below command
 
 ```bash
 gnome-terminal --command "python3 /home/nks/Projects/cloud-clipboard/cloudcb.py copy <username> <password>"
 ```
 
-- Add another keyboard shortcut `Alt + P` to 
+- Add another keyboard shortcut `Alt + P` to run the below command
 
 ```bash
 gnome-terminal --command "python3 /home/nks/Projects/cloud-clipboard/cloudcb.py paste <username> <password>"
-``` 
-- Replace `<username>` with your username and `<password>` with your password.
-- Install this [apk](https://github.com/krsoninikhil/cloud-clipboard/raw/master/mobile/bin/CloudClipboard-1.0-debug.apk) on your mobile.
-- You're all setup.
+```
+
+### For Windows
+
+- Right click and select `New -> Shortcut`
+- Add the following line as path location and click OK
+
+```bash
+C:\Windows\System32\cmd.exe /c python C:\Users\nik\Downloads\cloudcb.py copy <username> <password>
+```
+
+- Replace the file path accordingly.
+- Right click on shortcut icon and go to `properties`.
+- Type the suitable keyboard shortcut and click Apply.
 
 # Instructions to use
 
